@@ -32,6 +32,12 @@ function escapeHtml(text) {
     .replaceAll("'", "&#39;");
 }
 
+function normalizeName(name) {
+  return String(name || "")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
 function cleanPhoneNumber(phone) {
   return String(phone || "").replace(/[^\d+]/g, "");
 }
@@ -51,6 +57,54 @@ function updateStats(donors) {
   if (totalDonorsEl) totalDonorsEl.textContent = list.length;
   if (readyDonorsEl) readyDonorsEl.textContent = readyCount;
 }
+
+async function deleteDonorById(donorId) {
+  if (!db) {
+    setMessage("تعذر الاتصال بقاعدة البيانات.", true);
+    return;
+  }
+
+  const donor = allDonors.find((d) => String(d.id) === String(donorId));
+  if (!donor) {
+    setMessage("لم يتم العثور على سجل المتبرع.", true);
+    return;
+  }
+
+  const enteredName = prompt(
+    `لحذف سجل المتبرع (${donor.full_name})، يرجى كتابة الاسم المسجل بالضبط للتأكيد:`
+  );
+
+  if (enteredName === null) {
+    return;
+  }
+
+  if (normalizeName(enteredName) !== normalizeName(donor.full_name)) {
+    alert("الاسم المدخل لا يطابق الاسم المسجل. تم إلغاء عملية الحذف.");
+    return;
+  }
+
+  const confirmDelete = confirm(
+    `هل أنت متأكد من حذف بيانات (${donor.full_name}) نهائياً من منصة WAZIRI؟`
+  );
+  if (!confirmDelete) {
+    return;
+  }
+
+  setMessage("جاري حذف السجل...", false);
+
+  const { error } = await db.from(TABLE_NAME).delete().eq("id", donor.id);
+
+  if (error) {
+    console.error("Error deleting donor:", error);
+    setMessage("فشل حذف البيانات: " + error.message, true);
+    return;
+  }
+
+  setMessage("تم حذف بيانات المتبرع بنجاح.", false);
+  await loadDonors();
+}
+
+window.deleteDonorById = deleteDonorById;
 
 function renderDonors(donors) {
   if (!donorsList) return;
@@ -93,9 +147,15 @@ function renderDonors(donors) {
         ? `آخر تبرع: ${escapeHtml(donor.last_donation_date)}`
         : "لم يتبرع من قبل";
 
-      const notesText = donor.medical_notes
-        ? `<p class="donor-notes">ملاحظات: ${escapeHtml(donor.medical_notes)}</p>`
+      const medicalNotesText = donor.medical_notes
+        ? `<p class="donor-notes">ملاحظات طبية: ${escapeHtml(donor.medical_notes)}</p>`
         : "";
+
+      const contactNotesText = donor.contact_notes
+        ? `<p class="donor-contact-notes">وقت الاتصال: ${escapeHtml(donor.contact_notes)}</p>`
+        : "";
+
+      const safeId = escapeHtml(donor.id);
 
       return `
         <div class="donor-card">
@@ -105,10 +165,12 @@ function renderDonors(donors) {
           </div>
           <p class="donor-status ${statusClass}">${statusText}</p>
           <p class="donor-meta">${lastDonationText}</p>
-          ${notesText}
+          ${medicalNotesText}
+          ${contactNotesText}
           <div class="donor-actions">
             ${callBtn}
             ${waBtn}
+            <button type="button" onclick="deleteDonorById('${safeId}')" class="btn-delete">حذف بياناتي</button>
           </div>
         </div>
       `;
@@ -156,6 +218,8 @@ if (donorForm) {
       document.getElementById("last-donation")?.value || null;
     const medicalNotes =
       document.getElementById("medical-notes")?.value.trim() || "";
+    const contactNotes =
+      document.getElementById("contact-notes")?.value.trim() || "";
     const isAvailableEl = document.getElementById("is-available");
     const isAvailable = isAvailableEl ? Boolean(isAvailableEl.checked) : true;
 
@@ -173,6 +237,7 @@ if (donorForm) {
       blood_type: bloodType,
       last_donation_date: lastDonationDate || null,
       medical_notes: medicalNotes,
+      contact_notes: contactNotes,
       is_available: isAvailable
     };
 
