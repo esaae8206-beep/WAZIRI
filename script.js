@@ -49,4 +49,18 @@ function updateStats(donors) {
   ).length;
 
   if (totalDonorsEl) totalDonorsEl.textContent = list.length;
-  if (readyDonorsEl) readyDonorsEl
+  if (readyDonorsEl) readyDonorsEl.textContent = readyCount;
+}
+
+function renderDonors(donors) {
+  if (!donorsList) return;
+
+  const selectedBlood = bloodFilter ? bloodFilter.value : "ALL";
+  const filtered =
+    !selectedBlood || selectedBlood === "ALL"
+      ? donors
+      : donors.filter((d) => d.blood_type === selectedBlood);
+
+  if (!filtered || filtered.length === 0) {
+    donorsList.innerHTML =
+      '<p class="empty-state">لا يوجد متبر
