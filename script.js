@@ -1,5 +1,5 @@
-const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://ecpstvxtgpivsvqzeqay.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Jvau7rIUasO8ThdOh4htTQ_qUvWclw5";
 const TABLE_NAME = "donors";
 
 const db = window.supabase
@@ -28,38 +28,3 @@ function escapeHtml(text) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-}
-
-function updateStats(donors) {
-  if (totalDonorsEl) totalDonorsEl.textContent = donors.length;
-  if (readyDonorsEl) {
-    const readyCount = donors.filter((d) => isDonorReady(d.last_donation)).length;
-    readyDonorsEl.textContent = readyCount;
-  }
-}
-
-function renderDonors() {
-  if (!donorsList) return;
-  const selectedBlood = bloodFilter ? bloodFilter.value : "ALL";
-  const filtered =
-    selectedBlood === "ALL"
-      ? allDonors
-      : allDonors.filter((d) => d.blood_type === selectedBlood);
-
-  if (filtered.length === 0) {
-    donorsList.innerHTML =
-      '<p class="text-slate-500">لا يوجد متبرعون مطابقون للفلتر الحالي.</p>';
-    return;
-  }
-
-  donorsList.innerHTML = filtered
-    .map((donor) => {
-      const ready = isDonorReady(donor.last_donation);
-      const badgeClass = ready
-        ? "bg-emerald-100 text-emerald-800"
-        : "bg-amber-100 text-amber-800";
-      const badgeText = ready ? "جاهز للتبرع" : "غير جاهز حالياً";
-
-      return `
-        <div class="border rounded-
