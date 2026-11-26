@@ -28,3 +28,25 @@ function escapeHtml(text) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function cleanPhoneNumber(phone) {
+  return String(phone || "").replace(/[^\d+]/g, "");
+}
+
+function setMessage(text, isError = false) {
+  if (!formMessage) return;
+  formMessage.textContent = text;
+  formMessage.style.color = isError ? "#dc2626" : "#16a34a";
+}
+
+function updateStats(donors) {
+  const list = Array.isArray(donors) ? donors : [];
+  const readyCount = list.filter((d) =>
+    d.is_available === false ? false : isDonorReady(d.last_donation_date)
+  ).length;
+
+  if (totalDonorsEl) totalDonorsEl.textContent = list.length;
+  if (readyDonorsEl) readyDonorsEl
