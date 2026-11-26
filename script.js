@@ -117,7 +117,7 @@ function renderDonors(donors) {
 
   if (!filtered || filtered.length === 0) {
     donorsList.innerHTML =
-      '<p class="empty-state">لا يوجد متبرعون مطابقون حالياً.</p>';
+      '<p class="empty-state text-slate-500 text-sm">لا يوجد متبرعون مطابقون حالياً.</p>';
     return;
   }
 
@@ -128,7 +128,9 @@ function renderDonors(donors) {
           ? false
           : isDonorReady(donor.last_donation_date);
       const statusText = ready ? "جاهز للتبرع" : "غير جاهز حالياً";
-      const statusClass = ready ? "ready" : "not-ready";
+      const statusClass = ready
+        ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+        : "text-amber-700 bg-amber-50 border-amber-200";
 
       const cleanCall = cleanPhoneNumber(donor.phone);
       const cleanWa = cleanPhoneNumber(donor.whatsapp_phone || donor.phone).replace(
@@ -137,10 +139,10 @@ function renderDonors(donors) {
       );
 
       const callBtn = cleanCall
-        ? `<a href="tel:${escapeHtml(cleanCall)}" class="btn-call">اتصال</a>`
+        ? `<a href="tel:${escapeHtml(cleanCall)}" class="inline-flex items-center justify-center bg-red-800 hover:bg-red-900 text-white text-sm font-bold px-4 py-2 rounded-xl transition">اتصال</a>`
         : "";
       const waBtn = cleanWa
-        ? `<a href="https://wa.me/${escapeHtml(cleanWa)}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">واتساب</a>`
+        ? `<a href="https://wa.me/${escapeHtml(cleanWa)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition">واتساب</a>`
         : "";
 
       const lastDonationText = donor.last_donation_date
@@ -148,29 +150,31 @@ function renderDonors(donors) {
         : "لم يتبرع من قبل";
 
       const medicalNotesText = donor.medical_notes
-        ? `<p class="donor-notes">ملاحظات طبية: ${escapeHtml(donor.medical_notes)}</p>`
+        ? `<p class="text-sm text-slate-700 mt-1.5">ملاحظات طبية: ${escapeHtml(donor.medical_notes)}</p>`
         : "";
 
       const contactNotesText = donor.contact_notes
-        ? `<p class="donor-contact-notes">وقت الاتصال: ${escapeHtml(donor.contact_notes)}</p>`
+        ? `<p class="text-sm text-slate-700 mt-1.5">وقت الاتصال: ${escapeHtml(donor.contact_notes)}</p>`
         : "";
 
       const safeId = escapeHtml(donor.id);
 
       return `
-        <div class="donor-card">
-          <div class="donor-header">
-            <h3>${escapeHtml(donor.full_name)}</h3>
-            <span class="blood-badge">${escapeHtml(donor.blood_type)}</span>
+        <div class="border border-slate-200 rounded-2xl p-4 bg-white shadow-sm space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="font-extrabold text-base text-slate-900">${escapeHtml(donor.full_name)}</h3>
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-red-100 text-red-900">${escapeHtml(donor.blood_type)}</span>
           </div>
-          <p class="donor-status ${statusClass}">${statusText}</p>
-          <p class="donor-meta">${lastDonationText}</p>
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusClass}">${statusText}</span>
+          </div>
+          <p class="text-xs text-slate-500">${lastDonationText}</p>
           ${medicalNotesText}
           ${contactNotesText}
-          <div class="donor-actions">
+          <div class="flex items-center flex-wrap gap-2 pt-3 mt-2 border-t border-slate-100">
             ${callBtn}
             ${waBtn}
-            <button type="button" onclick="deleteDonorById('${safeId}')" class="btn-delete">حذف بياناتي</button>
+            <button type="button" onclick="deleteDonorById('${safeId}')" class="inline-flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-sm font-bold px-3.5 py-2 rounded-xl transition mr-auto">حذف بياناتي</button>
           </div>
         </div>
       `;
