@@ -104,13 +104,18 @@
 
         <form id="donor-form" class="space-y-4">
           <div>
-            <label for="full-name" class="block text-sm font-bold mb-1">الاسم الكامل</label>
+            <label for="full-name" class="block text-sm font-bold mb-1">اسم المتبرع</label>
             <input id="full-name" type="text" required placeholder="مثال: محمد علي الوزيري" class="w-full border rounded-xl px-4 py-3 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-700" />
           </div>
 
           <div>
             <label for="phone" class="block text-sm font-bold mb-1">رقم الهاتف</label>
             <input id="phone" type="tel" required placeholder="مثال: 0910000000" class="w-full border rounded-xl px-4 py-3 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-700" />
+          </div>
+
+          <div>
+            <label for="whatsapp-phone" class="block text-sm font-bold mb-1">رقم الاتصال السريع أو الواتساب</label>
+            <input id="whatsapp-phone" type="tel" placeholder="مثال: 0910000000 (اتركه فارغاً إذا كان نفس رقم الهاتف)" class="w-full border rounded-xl px-4 py-3 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-700" />
           </div>
 
           <div>
@@ -130,6 +135,11 @@
           <div>
             <label for="last-donation" class="block text-sm font-bold mb-1">تاريخ آخر تبرع (اختياري)</label>
             <input id="last-donation" type="date" class="w-full border rounded-xl px-4 py-3 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-700" />
+          </div>
+
+          <div>
+            <label for="medical-notes" class="block text-sm font-bold mb-1">أي إجراءات طبية أو عقاقير طبية تناولتها خلال آخر ستة أشهر</label>
+            <textarea id="medical-notes" rows="3" placeholder="اكتب (لا يوجد) في حال عدم وجود أي إجراءات أو أدوية، أو اذكر التفاصيل باختصار..." class="w-full border rounded-xl px-4 py-3 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-700"></textarea>
           </div>
 
           <button type="submit" class="w-full bg-red-800 hover:bg-red-900 text-white font-bold py-3.5 rounded-xl transition">
@@ -156,7 +166,7 @@
           </select>
         </div>
 
-        <div id="donors-list">
+        <div id="donors-list" class="space-y-3">
           <p class="text-slate-500 text-sm">جاري تحميل القائمة...</p>
         </div>
       </section>
